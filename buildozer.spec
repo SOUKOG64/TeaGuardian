@@ -50,6 +50,12 @@ android.api = 31
 # (int) Minimum API your APK will support
 android.minapi = 21
 
+android.accept_sdk_license = True
+android.api = 34
+android.minapi = 24
+android.archs = arm64-v8a, armeabi-v7a
+requirements = python3,kivy,requests,urllib3,idna,certifi,charset-normalizer
+android.permissions = INTERNET
 # (bool) Use --private data directory instead of --dir
 # android.private_storage = True
 
