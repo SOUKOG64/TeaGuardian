@@ -37,15 +37,19 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.buildozer
-          key: buildozer-${{ hashFiles('buildozer.spec') }}
-          save-always: true
+          key: buildozer-v3-${{ hashFiles('buildozer.spec') }}
 
       - name: Build APK
-        run: buildozer android debug 2>&1 | tee build.log
+        shell: bash
+        run: |
+          set -o pipefail
+          buildozer android debug 2>&1 | tee build.log
 
       - name: Show error
         if: failure()
-        run: grep -n -i -E "error|traceback|failed|no such file|not found" build.log | tail -60
+        run: |
+          grep -n "Command failed" build.log | cut -c1-400 || true
+          grep -n -E "ERROR|Traceback" build.log | tail -40 | cut -c1-300 || true
 
       - name: Upload log
         if: always()
@@ -59,3 +63,4 @@ jobs:
         with:
           name: TeaGuardian-apk
           path: bin/*.apk
+          if-no-files-found: error
