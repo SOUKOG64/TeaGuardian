@@ -36,13 +36,23 @@ jobs:
       - name: Cache Buildozer
         uses: actions/cache@v4
         with:
-          path: |
-            ~/.buildozer
-            .buildozer
+          path: ~/.buildozer
           key: buildozer-${{ hashFiles('buildozer.spec') }}
+          save-always: true
 
       - name: Build APK
-        run: buildozer android debug
+        run: buildozer android debug 2>&1 | tee build.log
+
+      - name: Show error
+        if: failure()
+        run: grep -n -i -E "error|traceback|failed|no such file|not found" build.log | tail -60
+
+      - name: Upload log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log
+          path: build.log
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
